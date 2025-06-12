@@ -125,11 +125,16 @@ def chat(chat_message: ChatMessage):  # ← SIN async
         if not user_input.strip():
             raise HTTPException(400, "Message cannot be empty")
         
-        # Ejecutar directamente sin asyncio
-        result = Runner.run_sync(agent, user_input)
+        # Crear event loop para el worker thread (igual que en Flask)
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         
-        return ChatResponse(respuesta=result.final_output)
-        
+        try:
+            result = Runner.run_sync(agent, user_input)
+            return ChatResponse(respuesta=result.final_output)
+        finally:
+            loop.close()
+            
     except Exception as e:
         raise HTTPException(500, f"Chat agent error: {str(e)}")
 
