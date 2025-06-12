@@ -119,20 +119,17 @@ async def get_book(book_id: str):
 # Nueva ruta para el chat agent
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(chat_message: ChatMessage):
-    """
-    Endpoint para interactuar con el agente de chat
-    """
     try:
         user_input = chat_message.message
         
         if not user_input.strip():
             raise HTTPException(400, "Message cannot be empty")
         
-        # Ejecutar el agente de forma asíncrona
-        loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(
+        result = await asyncio.get_running_loop().run_in_executor(
             None, 
-            lambda: Runner.run_sync(agent, user_input)
+            Runner.run_sync,
+            agent,
+            user_input
         )
         
         return ChatResponse(respuesta=result.final_output)
@@ -152,34 +149,6 @@ async def agent_info():
         "model": agent.model,
         "status": "active"
     }
-
-# Ruta para combinar libros y chat (ejemplo de integración)
-@app.post("/api/chat-about-books")
-async def chat_about_books(chat_message: ChatMessage):
-    """
-    Chat agent con contexto sobre los libros disponibles
-    """
-    try:
-        user_input = chat_message.message
-        
-        # Agregar contexto de libros al mensaje
-        books_context = f"Libros disponibles: {len(BOOKS)} libros. "
-        if BOOKS:
-            books_context += f"Géneros: {list(set(book.get('genre', 'unknown') for book in BOOKS))}. "
-        
-        enhanced_message = f"{books_context}Pregunta del usuario: {user_input}"
-        
-        # Ejecutar el agente
-        loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(
-            None, 
-            lambda: Runner.run_sync(agent, enhanced_message)
-        )
-        
-        return ChatResponse(respuesta=result.final_output)
-        
-    except Exception as e:
-        raise HTTPException(500, f"Chat agent error: {str(e)}")
 
 # Ruta de salud del sistema
 @app.get("/health")
