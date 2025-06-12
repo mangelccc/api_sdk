@@ -116,21 +116,17 @@ async def get_book(book_id: str):
             return book
     raise HTTPException(404, f"Book ID {book_id} not found in database.")
 
-# Nueva ruta para el chat agent
+# Nueva ruta para el chat agent (SÍNCRONA)
 @app.post("/api/chat", response_model=ChatResponse)
-async def chat(chat_message: ChatMessage):
+def chat(chat_message: ChatMessage):  # ← SIN async
     try:
         user_input = chat_message.message
         
         if not user_input.strip():
             raise HTTPException(400, "Message cannot be empty")
         
-        result = await asyncio.get_running_loop().run_in_executor(
-            None, 
-            Runner.run_sync,
-            agent,
-            user_input
-        )
+        # Ejecutar directamente sin asyncio
+        result = Runner.run_sync(agent, user_input)
         
         return ChatResponse(respuesta=result.final_output)
         
