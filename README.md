@@ -1,4 +1,4 @@
-# 🤖 FastAPI Chat API
+# 🤖 Chat Agents SDK API
 
 Una API REST construida con **FastAPI** que proporciona endpoints para interactuar con agentes de chat basados en **OpenAI GPT**. Diseñada para funcionar como backend de aplicaciones de chat en React.
 
