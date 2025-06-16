@@ -111,9 +111,7 @@ GET /api/agent-info
 ### **JavaScript/React**
 
 ```javascript
-// Enviar mensaje al chat
-const sendMessage = async (message) => {
-  const response = await fetch('http://localhost:8000/api/chat', {
+fetch('http://localhost:8000/api/chat', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -124,31 +122,7 @@ const sendMessage = async (message) => {
   
   const data = await response.json();
   return data.respuesta;
-};
-
-// Usar en componente React
-const ChatComponent = () => {
-  const [message, setMessage] = useState('');
-  const [response, setResponse] = useState('');
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const agentResponse = await sendMessage(message);
-    setResponse(agentResponse);
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input 
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Escribe tu mensaje..."
-      />
-      <button type="submit">Enviar</button>
-      {response && <p>Agente: {response}</p>}
-    </form>
-  );
-};
+}
 ```
 
 ### **cURL**
