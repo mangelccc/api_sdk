@@ -238,16 +238,6 @@ docker run -p 8000:8000 --env-file .env fastapi-chat
 2. Agregar rutas específicas en `app/routes.py`
 3. Actualizar modelos si es necesario
 
-### **Testing**
-
-```bash
-# Instalar pytest
-pip install pytest
-
-# Ejecutar tests
-pytest
-```
-
 ## 📚 **Tecnologías Utilizadas**
 
 - **FastAPI** - Framework web moderno para Python
@@ -255,26 +245,6 @@ pytest
 - **Pydantic** - Validación de datos
 - **Uvicorn** - Servidor ASGI
 - **Mangum** - Adaptador para AWS Lambda
-
-## 🤝 **Contribuir**
-
-1. Fork el proyecto
-2. Crea una rama feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -am 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
-
-## 📄 **Licencia**
-
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
-
-## 🆘 **Soporte**
-
-¿Problemas o preguntas?
-
-- 🐛 [Reportar bug](issues)
-- 💡 [Sugerir feature](issues)
-- 📧 Contacto: tu_email@ejemplo.com
 
 ---
 
