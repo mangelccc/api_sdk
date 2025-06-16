@@ -15,7 +15,7 @@ Esta API permite a aplicaciones frontend (especialmente **React**) enviar mensaj
 
 Esta API está diseñada para funcionar con nuestra aplicación React de chat:
 
-**🔗 [Repositorio React Chat Frontend]([ENLACE_AL_REPO_REACT](https://github.com/mangelccc/react_sdk))** 
+**🔗 [Repositorio React Chat Frontend](https://github.com/mangelccc/react_sdk)** 
 
 ## 🚀 **Inicio Rápido**
 
