@@ -51,7 +51,7 @@ VECTOR_STORE_ID=tu_vector_store_id_aqui
 API_AUTH_TOKEN=tu_token_secreto_aqui
 ```
 
-> ⚠️ **IMPORTANTE:** Para obtener el `API_AUTH_TOKEN` debes contactar con el administrador del sistema.
+> ⚠️ **IMPORTANTE:** Para obtener el `API_AUTH_TOKEN` debes contactarme.
 
 ### **Ejecutar**
 
