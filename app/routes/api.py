@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from app.api.models import ChatResponse
-from app.api.controllers.chat_controller import ChatController
+from app.api.models.Chat import ChatResponse
+from app.api.controllers.ControllerChat import ChatController
 
 # Crear router para rutas de API
 router = APIRouter(prefix="/api", tags=["chat"])
