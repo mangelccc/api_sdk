@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Depends
-from app.api.models.chat_model import ChatMessage, ChatResponse
+from app.api.models.Chat import ChatMessage, ChatResponse
 from app.security import verify_token
 from app.agents import agent
 from agents import Runner
