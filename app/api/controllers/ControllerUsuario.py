@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Depends
-from app.api.models.User import Usuario, UsuariosResponse, CreateUsuario, UpdateUsuario
+from app.api.models.Usuario import Usuario, UsuariosResponse, CreateUsuario, UpdateUsuario, DeleteUsuarioResponse
 from app.security import verify_token
 from app.bd.conexion_bd_agents import get_db_connection
 import psycopg2.extras
