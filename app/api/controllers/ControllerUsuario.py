@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Depends
-from app.api.models.Usuario import Usuario, UsuariosResponse, CreateUsuario, UpdateUsuario, DeleteUsuarioResponse
+from app.api.models.Usuario import Usuario, CreateUsuario, UpdateUsuario
 from app.security import verify_token
 from app.bd.conexion_bd_agents import get_db_connection
 import psycopg2.extras
@@ -10,95 +10,65 @@ from datetime import datetime
 class UserController:
     @staticmethod
     def index(token: str = Depends(verify_token)):
-        """
-        Obtiene todos los usuarios de la base de datos
-        Este método está diseñado para ser usado directamente como un manejador de ruta
-        """
-        connection = None
-        cursor = None
-        
+        """Obtiene todos los usuarios de la base de datos"""
         try:
-            # Establecer conexión
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
-            # Ejecutar consulta
             cursor.execute("SELECT * FROM usuarios ORDER BY id")
             rows = cursor.fetchall()
             
-            # Convertir a lista de objetos Usuario
             usuarios = []
             for row in rows:
-                # Convertir campos JSON si existen
-                cualidades = row.get('cualidades', [])
-                if isinstance(cualidades, str):
-                    try:
-                        cualidades = json.loads(cualidades)
-                    except:
-                        cualidades = []
+                # Convertir campos JSON
+                cualidades = json.loads(row.get('cualidades', '[]')) if isinstance(row.get('cualidades'), str) else row.get('cualidades', [])
+                funciones = json.loads(row.get('funciones', '[]')) if isinstance(row.get('funciones'), str) else row.get('funciones', [])
                 
-                funciones = row.get('funciones', [])
-                if isinstance(funciones, str):
-                    try:
-                        funciones = json.loads(funciones)
-                    except:
-                        funciones = []
-                
-                usuario = Usuario(
-                    id=row.get('id'),
-                    uuid=row.get('uuid'),
-                    created_at=row.get('created_at'),
-                    updated_at=row.get('updated_at'),
-                    email=row.get('email'),
-                    contrasena=row.get('contrasena'),  # En producción no devolver la contraseña
-                    nombre=row.get('nombre'),
-                    avatar=row.get('avatar'),
-                    tipo=row.get('tipo', 'USUARIO'),
-                    fecha_nacimiento=row.get('fecha_nacimiento'),
-                    link_linkedin=row.get('link_linkedin'),
-                    link_github=row.get('link_github'),
-                    tema=row.get('tema', 'DEFAULT'),
-                    idioma=row.get('idioma', 'ES'),
-                    mejorar_agente=row.get('mejorar_agente', False),
-                    instrucciones=row.get('instrucciones'),
-                    apodo=row.get('apodo'),
-                    oficio=row.get('oficio'),
-                    cualidades=cualidades,
-                    sobre_ti=row.get('sobre_ti'),
-                    funciones=funciones,
-                    memoria=row.get('memoria', False),
-                    provider=row.get('provider'),
-                    provider_id=row.get('provider_id')
-                )
+                usuario = {
+                    "id": row.get('id'),
+                    "uuid": str(row.get('uuid')) if row.get('uuid') else None,
+                    "email": row.get('email'),
+                    "nombre": row.get('nombre'),
+                    "avatar": row.get('avatar'),
+                    "tipo": row.get('tipo', 'USUARIO'),
+                    "fecha_nacimiento": str(row.get('fecha_nacimiento')) if row.get('fecha_nacimiento') else None,
+                    "link_linkedin": row.get('link_linkedin'),
+                    "link_github": row.get('link_github'),
+                    "tema": row.get('tema', 'DEFAULT'),
+                    "idioma": row.get('idioma', 'ES'),
+                    "mejorar_agente": row.get('mejorar_agente', False),
+                    "instrucciones": row.get('instrucciones'),
+                    "apodo": row.get('apodo'),
+                    "oficio": row.get('oficio'),
+                    "cualidades": cualidades,
+                    "sobre_ti": row.get('sobre_ti'),
+                    "funciones": funciones,
+                    "memoria": row.get('memoria', False),
+                    "provider": row.get('provider'),
+                    "provider_id": row.get('provider_id'),
+                    "created_at": str(row.get('created_at')) if row.get('created_at') else None,
+                    "updated_at": str(row.get('updated_at')) if row.get('updated_at') else None
+                }
                 usuarios.append(usuario)
             
-            return UsuariosResponse(usuarios=usuarios, total=len(usuarios))
+            cursor.close()
+            connection.close()
             
-        except psycopg2.Error as db_error:
-            raise HTTPException(
-                status_code=500, 
-                detail=f"Error de base de datos: {str(db_error)}"
-            )
+            return {
+                "data": {
+                    "usuarios": usuarios,
+                    "total": len(usuarios)
+                },
+                "status": "success",
+                "message": f"Se encontraron {len(usuarios)} usuarios"
+            }
+            
         except Exception as e:
-            raise HTTPException(
-                status_code=500, 
-                detail=f"Error interno del servidor: {str(e)}"
-            )
-        finally:
-            # Cerrar cursor y conexión
-            if cursor:
-                cursor.close()
-            if connection:
-                connection.close()
+            raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
     @staticmethod
     def show(user_id: int, token: str = Depends(verify_token)):
-        """
-        Obtiene un usuario específico por ID
-        """
-        connection = None
-        cursor = None
-        
+        """Obtiene un usuario específico por ID"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -109,76 +79,53 @@ class UserController:
             if not row:
                 raise HTTPException(status_code=404, detail="Usuario no encontrado")
             
-            # Convertir campos JSON si existen
-            cualidades = row.get('cualidades', [])
-            if isinstance(cualidades, str):
-                try:
-                    cualidades = json.loads(cualidades)
-                except:
-                    cualidades = []
+            # Convertir campos JSON
+            cualidades = json.loads(row.get('cualidades', '[]')) if isinstance(row.get('cualidades'), str) else row.get('cualidades', [])
+            funciones = json.loads(row.get('funciones', '[]')) if isinstance(row.get('funciones'), str) else row.get('funciones', [])
             
-            funciones = row.get('funciones', [])
-            if isinstance(funciones, str):
-                try:
-                    funciones = json.loads(funciones)
-                except:
-                    funciones = []
+            usuario = {
+                "id": row.get('id'),
+                "uuid": str(row.get('uuid')) if row.get('uuid') else None,
+                "email": row.get('email'),
+                "nombre": row.get('nombre'),
+                "avatar": row.get('avatar'),
+                "tipo": row.get('tipo', 'USUARIO'),
+                "fecha_nacimiento": str(row.get('fecha_nacimiento')) if row.get('fecha_nacimiento') else None,
+                "link_linkedin": row.get('link_linkedin'),
+                "link_github": row.get('link_github'),
+                "tema": row.get('tema', 'DEFAULT'),
+                "idioma": row.get('idioma', 'ES'),
+                "mejorar_agente": row.get('mejorar_agente', False),
+                "instrucciones": row.get('instrucciones'),
+                "apodo": row.get('apodo'),
+                "oficio": row.get('oficio'),
+                "cualidades": cualidades,
+                "sobre_ti": row.get('sobre_ti'),
+                "funciones": funciones,
+                "memoria": row.get('memoria', False),
+                "provider": row.get('provider'),
+                "provider_id": row.get('provider_id'),
+                "created_at": str(row.get('created_at')) if row.get('created_at') else None,
+                "updated_at": str(row.get('updated_at')) if row.get('updated_at') else None
+            }
             
-            usuario = Usuario(
-                id=row.get('id'),
-                uuid=row.get('uuid'),
-                created_at=row.get('created_at'),
-                updated_at=row.get('updated_at'),
-                email=row.get('email'),
-                contrasena=row.get('contrasena'),  # En producción no devolver la contraseña
-                nombre=row.get('nombre'),
-                avatar=row.get('avatar'),
-                tipo=row.get('tipo', 'USUARIO'),
-                fecha_nacimiento=row.get('fecha_nacimiento'),
-                link_linkedin=row.get('link_linkedin'),
-                link_github=row.get('link_github'),
-                tema=row.get('tema', 'DEFAULT'),
-                idioma=row.get('idioma', 'ES'),
-                mejorar_agente=row.get('mejorar_agente', False),
-                instrucciones=row.get('instrucciones'),
-                apodo=row.get('apodo'),
-                oficio=row.get('oficio'),
-                cualidades=cualidades,
-                sobre_ti=row.get('sobre_ti'),
-                funciones=funciones,
-                memoria=row.get('memoria', False),
-                provider=row.get('provider'),
-                provider_id=row.get('provider_id')
-            )
+            cursor.close()
+            connection.close()
             
-            return usuario
+            return {
+                "data": usuario,
+                "status": "success",
+                "message": "Usuario encontrado exitosamente"
+            }
             
-        except psycopg2.Error as db_error:
-            raise HTTPException(
-                status_code=500, 
-                detail=f"Error de base de datos: {str(db_error)}"
-            )
         except HTTPException:
             raise
         except Exception as e:
-            raise HTTPException(
-                status_code=500, 
-                detail=f"Error interno del servidor: {str(e)}"
-            )
-        finally:
-            if cursor:
-                cursor.close()
-            if connection:
-                connection.close()
+            raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
     @staticmethod
     def create(user_data: CreateUsuario, token: str = Depends(verify_token)):
-        """
-        Crea un nuevo usuario
-        """
-        connection = None
-        cursor = None
-        
+        """Crea un nuevo usuario"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -187,12 +134,8 @@ class UserController:
             user_uuid = user_data.uuid if user_data.uuid else uuid.uuid4()
             
             # Convertir listas a JSON
-            cualidades_json = json.dumps(user_data.cualidades) if user_data.cualidades else '[]'
-            funciones_json = json.dumps(user_data.funciones) if user_data.funciones else '[]'
-            
-            # TODO: En producción, hashear la contraseña antes de guardarla
-            # from werkzeug.security import generate_password_hash
-            # hashed_password = generate_password_hash(user_data.contrasena)
+            cualidades_json = json.dumps(user_data.cualidades)
+            funciones_json = json.dumps(user_data.funciones)
             
             cursor.execute("""
                 INSERT INTO usuarios (
@@ -215,80 +158,32 @@ class UserController:
             
             row = cursor.fetchone()
             connection.commit()
+            cursor.close()
+            connection.close()
             
-            # Convertir campos JSON de vuelta
-            cualidades = json.loads(row.get('cualidades', '[]'))
-            funciones = json.loads(row.get('funciones', '[]'))
+            return {
+                "data": {
+                    "id": row['id'],
+                    "uuid": str(row['uuid']),
+                    "email": row['email'],
+                    "nombre": row['nombre'],
+                    "mensaje": "Usuario creado exitosamente"
+                },
+                "status": "success",
+                "message": "Usuario creado exitosamente"
+            }
             
-            usuario = Usuario(
-                id=row['id'],
-                uuid=row['uuid'],
-                created_at=row['created_at'],
-                updated_at=row['updated_at'],
-                email=row['email'],
-                contrasena=row['contrasena'],
-                nombre=row['nombre'],
-                avatar=row['avatar'],
-                tipo=row['tipo'],
-                fecha_nacimiento=row['fecha_nacimiento'],
-                link_linkedin=row['link_linkedin'],
-                link_github=row['link_github'],
-                tema=row['tema'],
-                idioma=row['idioma'],
-                mejorar_agente=row['mejorar_agente'],
-                instrucciones=row['instrucciones'],
-                apodo=row['apodo'],
-                oficio=row['oficio'],
-                cualidades=cualidades,
-                sobre_ti=row['sobre_ti'],
-                funciones=funciones,
-                memoria=row['memoria'],
-                provider=row['provider'],
-                provider_id=row['provider_id']
-            )
-            
-            return usuario
-            
-        except psycopg2.IntegrityError as integrity_error:
-            if connection:
-                connection.rollback()
-            raise HTTPException(
-                status_code=400, 
-                detail=f"Error de integridad (posiblemente email duplicado): {str(integrity_error)}"
-            )
-        except psycopg2.Error as db_error:
-            if connection:
-                connection.rollback()
-            raise HTTPException(
-                status_code=500, 
-                detail=f"Error de base de datos: {str(db_error)}"
-            )
         except Exception as e:
-            if connection:
-                connection.rollback()
-            raise HTTPException(
-                status_code=500, 
-                detail=f"Error interno del servidor: {str(e)}"
-            )
-        finally:
-            if cursor:
-                cursor.close()
-            if connection:
-                connection.close()
+            raise HTTPException(status_code=500, detail=f"Error al crear usuario: {str(e)}")
 
     @staticmethod
     def update(user_id: int, user_data: UpdateUsuario, token: str = Depends(verify_token)):
-        """
-        Actualiza un usuario existente
-        """
-        connection = None
-        cursor = None
-        
+        """Actualiza un usuario existente"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
-            # Crear query dinámico solo con campos que no son None
+            # Campos a actualizar
             update_fields = []
             update_values = []
             
@@ -304,18 +199,11 @@ class UserController:
             if not update_fields:
                 raise HTTPException(status_code=400, detail="No hay campos para actualizar")
             
-            # Agregar updated_at
             update_fields.append("updated_at = %s")
             update_values.append(datetime.now())
             update_values.append(user_id)
             
-            query = f"""
-                UPDATE usuarios 
-                SET {', '.join(update_fields)}
-                WHERE id = %s 
-                RETURNING *
-            """
-            
+            query = f"UPDATE usuarios SET {', '.join(update_fields)} WHERE id = %s RETURNING id, email, nombre"
             cursor.execute(query, update_values)
             row = cursor.fetchone()
             
@@ -323,121 +211,56 @@ class UserController:
                 raise HTTPException(status_code=404, detail="Usuario no encontrado")
             
             connection.commit()
+            cursor.close()
+            connection.close()
             
-            # Convertir campos JSON de vuelta
-            cualidades = json.loads(row.get('cualidades', '[]'))
-            funciones = json.loads(row.get('funciones', '[]'))
+            return {
+                "data": {
+                    "id": row['id'],
+                    "email": row['email'],
+                    "nombre": row['nombre'],
+                    "mensaje": "Usuario actualizado exitosamente"
+                },
+                "status": "success",
+                "message": "Usuario actualizado exitosamente"
+            }
             
-            usuario = Usuario(
-                id=row['id'],
-                uuid=row['uuid'],
-                created_at=row['created_at'],
-                updated_at=row['updated_at'],
-                email=row['email'],
-                contrasena=row['contrasena'],
-                nombre=row['nombre'],
-                avatar=row['avatar'],
-                tipo=row['tipo'],
-                fecha_nacimiento=row['fecha_nacimiento'],
-                link_linkedin=row['link_linkedin'],
-                link_github=row['link_github'],
-                tema=row['tema'],
-                idioma=row['idioma'],
-                mejorar_agente=row['mejorar_agente'],
-                instrucciones=row['instrucciones'],
-                apodo=row['apodo'],
-                oficio=row['oficio'],
-                cualidades=cualidades,
-                sobre_ti=row['sobre_ti'],
-                funciones=funciones,
-                memoria=row['memoria'],
-                provider=row['provider'],
-                provider_id=row['provider_id']
-            )
-            
-            return usuario
-            
-        except psycopg2.IntegrityError as integrity_error:
-            if connection:
-                connection.rollback()
-            raise HTTPException(
-                status_code=400, 
-                detail=f"Error de integridad: {str(integrity_error)}"
-            )
-        except psycopg2.Error as db_error:
-            if connection:
-                connection.rollback()
-            raise HTTPException(
-                status_code=500, 
-                detail=f"Error de base de datos: {str(db_error)}"
-            )
         except HTTPException:
             raise
         except Exception as e:
-            if connection:
-                connection.rollback()
-            raise HTTPException(
-                status_code=500, 
-                detail=f"Error interno del servidor: {str(e)}"
-            )
-        finally:
-            if cursor:
-                cursor.close()
-            if connection:
-                connection.close()
+            raise HTTPException(status_code=500, detail=f"Error al actualizar usuario: {str(e)}")
 
     @staticmethod
     def delete(user_id: int, token: str = Depends(verify_token)):
-        """
-        Elimina un usuario existente
-        """
-        connection = None
-        cursor = None
-        
+        """Elimina un usuario existente"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
-            # Primero verificar que el usuario existe
+            # Verificar que existe
             cursor.execute("SELECT id, email, nombre FROM usuarios WHERE id = %s", (user_id,))
             user_exists = cursor.fetchone()
             
             if not user_exists:
                 raise HTTPException(status_code=404, detail="Usuario no encontrado")
             
-            # Eliminar el usuario
+            # Eliminar
             cursor.execute("DELETE FROM usuarios WHERE id = %s", (user_id,))
-            
-            if cursor.rowcount == 0:
-                raise HTTPException(status_code=404, detail="Usuario no encontrado")
-            
             connection.commit()
+            cursor.close()
+            connection.close()
             
             return {
-                "message": "Usuario eliminado exitosamente",
-                "deleted_user_id": user_id,
-                "deleted_user_email": user_exists['email'],
-                "deleted_user_name": user_exists['nombre']
+                "data": {
+                    "deleted_user_id": user_id,
+                    "deleted_user_email": user_exists['email'],
+                    "deleted_user_name": user_exists['nombre']
+                },
+                "status": "success",
+                "message": "Usuario eliminado exitosamente"
             }
             
-        except psycopg2.Error as db_error:
-            if connection:
-                connection.rollback()
-            raise HTTPException(
-                status_code=500, 
-                detail=f"Error de base de datos: {str(db_error)}"
-            )
         except HTTPException:
             raise
         except Exception as e:
-            if connection:
-                connection.rollback()
-            raise HTTPException(
-                status_code=500, 
-                detail=f"Error interno del servidor: {str(e)}"
-            )
-        finally:
-            if cursor:
-                cursor.close()
-            if connection:
-                connection.close()
+            raise HTTPException(status_code=500, detail=f"Error al eliminar usuario: {str(e)}")
