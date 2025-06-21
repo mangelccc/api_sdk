@@ -7,7 +7,7 @@ import json
 import uuid
 from datetime import datetime
 
-class UserController:
+class UsuarioController:
     @staticmethod
     def index(token: str = Depends(verify_token)):
         """Obtiene todos los usuarios - Estilo Laravel"""
@@ -69,14 +69,14 @@ class UserController:
             raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
     @staticmethod
-    def store(user_data: CreateUsuario, token: str = Depends(verify_token)):
+    def store(usuario_data: CreateUsuario, token: str = Depends(verify_token)):
         """Crea un nuevo usuario - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
             # Obtener datos del modelo y preparar valores
-            data = user_data.dict(exclude_unset=True)
+            data = usuario_data.dict(exclude_unset=True)
             
             # Generar UUID si no existe
             if 'uuid' not in data or not data['uuid']:
@@ -158,13 +158,13 @@ class UserController:
             raise HTTPException(status_code=500, detail=f"Error al crear usuario: {str(e)}")
 
     @staticmethod
-    def show(user_id: int, token: str = Depends(verify_token)):
+    def show(usuario_id: int, token: str = Depends(verify_token)):
         """Obtiene un usuario específico por ID - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
-            cursor.execute("SELECT * FROM usuarios WHERE id = %s", (user_id,))
+            cursor.execute("SELECT * FROM usuarios WHERE id = %s", (usuario_id,))
             row = cursor.fetchone()
             
             cursor.close()
@@ -215,13 +215,13 @@ class UserController:
             raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
     @staticmethod
-    def show_by_uuid(user_uuid: str, token: str = Depends(verify_token)):
+    def show_by_uuid(usuario_uuid: str, token: str = Depends(verify_token)):
         """Obtiene un usuario específico por UUID - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
-            cursor.execute("SELECT * FROM usuarios WHERE uuid = %s", (user_uuid,))
+            cursor.execute("SELECT * FROM usuarios WHERE uuid = %s", (usuario_uuid,))
             row = cursor.fetchone()
             
             cursor.close()
@@ -272,14 +272,14 @@ class UserController:
             raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
     @staticmethod
-    def update(user_id: int, user_data: UpdateUsuario, token: str = Depends(verify_token)):
+    def update(usuario_id: int, usuario_data: UpdateUsuario, token: str = Depends(verify_token)):
         """Actualiza un usuario completo por ID - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
             # Verificar que existe
-            cursor.execute("SELECT id FROM usuarios WHERE id = %s", (user_id,))
+            cursor.execute("SELECT id FROM usuarios WHERE id = %s", (usuario_id,))
             if not cursor.fetchone():
                 cursor.close()
                 connection.close()
@@ -289,7 +289,7 @@ class UserController:
                 }
             
             # Obtener datos validados
-            data = user_data.dict(exclude_unset=True)
+            data = usuario_data.dict(exclude_unset=True)
             
             if not data:
                 cursor.close()
@@ -307,7 +307,7 @@ class UserController:
             
             # Generar UPDATE dinámico
             set_clauses = [f"{column} = %s" for column in data.keys()]
-            values = list(data.values()) + [user_id]
+            values = list(data.values()) + [usuario_id]
             
             query = f"""
                 UPDATE usuarios 
@@ -362,14 +362,14 @@ class UserController:
             raise HTTPException(status_code=500, detail=f"Error al actualizar usuario: {str(e)}")
 
     @staticmethod
-    def update_by_uuid(user_uuid: str, user_data: UpdateUsuario, token: str = Depends(verify_token)):
+    def update_by_uuid(usuario_uuid: str, usuario_data: UpdateUsuario, token: str = Depends(verify_token)):
         """Actualiza un usuario completo por UUID - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
             # Verificar que existe
-            cursor.execute("SELECT id FROM usuarios WHERE uuid = %s", (user_uuid,))
+            cursor.execute("SELECT id FROM usuarios WHERE uuid = %s", (usuario_uuid,))
             if not cursor.fetchone():
                 cursor.close()
                 connection.close()
@@ -379,7 +379,7 @@ class UserController:
                 }
             
             # Obtener datos validados
-            data = user_data.dict(exclude_unset=True)
+            data = usuario_data.dict(exclude_unset=True)
             
             if not data:
                 cursor.close()
@@ -397,7 +397,7 @@ class UserController:
             
             # Generar UPDATE dinámico
             set_clauses = [f"{column} = %s" for column in data.keys()]
-            values = list(data.values()) + [user_uuid]
+            values = list(data.values()) + [usuario_uuid]
             
             query = f"""
                 UPDATE usuarios 
@@ -452,14 +452,14 @@ class UserController:
             raise HTTPException(status_code=500, detail=f"Error al actualizar usuario: {str(e)}")
 
     @staticmethod
-    def destroy(user_id: int, token: str = Depends(verify_token)):
+    def destroy(usuario_id: int, token: str = Depends(verify_token)):
         """Elimina un usuario por ID - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
             # Verificar que existe
-            cursor.execute("SELECT id FROM usuarios WHERE id = %s", (user_id,))
+            cursor.execute("SELECT id FROM usuarios WHERE id = %s", (usuario_id,))
             if not cursor.fetchone():
                 cursor.close()
                 connection.close()
@@ -469,7 +469,7 @@ class UserController:
                 }
             
             # Eliminar
-            cursor.execute("DELETE FROM usuarios WHERE id = %s", (user_id,))
+            cursor.execute("DELETE FROM usuarios WHERE id = %s", (usuario_id,))
             connection.commit()
             cursor.close()
             connection.close()
@@ -483,14 +483,14 @@ class UserController:
             raise HTTPException(status_code=500, detail=f"Error al eliminar usuario: {str(e)}")
 
     @staticmethod
-    def destroy_by_uuid(user_uuid: str, token: str = Depends(verify_token)):
+    def destroy_by_uuid(usuario_uuid: str, token: str = Depends(verify_token)):
         """Elimina un usuario por UUID - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
             # Verificar que existe
-            cursor.execute("SELECT id FROM usuarios WHERE uuid = %s", (user_uuid,))
+            cursor.execute("SELECT id FROM usuarios WHERE uuid = %s", (usuario_uuid,))
             if not cursor.fetchone():
                 cursor.close()
                 connection.close()
@@ -500,7 +500,7 @@ class UserController:
                 }
             
             # Eliminar
-            cursor.execute("DELETE FROM usuarios WHERE uuid = %s", (user_uuid,))
+            cursor.execute("DELETE FROM usuarios WHERE uuid = %s", (usuario_uuid,))
             connection.commit()
             cursor.close()
             connection.close()
