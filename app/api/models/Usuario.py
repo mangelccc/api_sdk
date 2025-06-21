@@ -37,6 +37,11 @@ class Usuario(BaseModel):
     class Config:
         from_attributes = True
 
+# Modelo para la respuesta de lista de usuarios
+class UsuariosResponse(BaseModel):
+    usuarios: List[Usuario]
+    total: int
+
 # Modelo para crear un usuario (campos requeridos)
 class CreateUsuario(BaseModel):
     email: EmailStr = Field(..., description="Email requerido")
@@ -85,3 +90,10 @@ class UpdateUsuario(BaseModel):
     memoria: Optional[bool] = None
     provider: Optional[str] = None
     provider_id: Optional[str] = None
+
+# Modelo para la respuesta de eliminación de usuario
+class DeleteUsuarioResponse(BaseModel):
+    message: str
+    deleted_user_id: int
+    deleted_user_email: Optional[str] = None
+    deleted_user_name: Optional[str] = None
