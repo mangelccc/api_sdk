@@ -1,13 +1,128 @@
+
 from fastapi import HTTPException, Depends
 from app.api.models.Usuario import Usuario, CreateUsuario, UpdateUsuario
 from app.security import verify_token
 from app.bd.conexion_bd_agents import get_db_connection
+from app.services.EmailService import EmailService
+from pydantic import BaseModel, EmailStr
+from fastapi.responses import HTMLResponse
 import psycopg2.extras
 import json
 import uuid
 from datetime import datetime
 
+# Modelo simple para el registro
+class RegistroRequest(BaseModel):
+    email: EmailStr
+
 class UsuarioController:
+
+    @staticmethod
+    def registro(registro_data: RegistroRequest, token: str = Depends(verify_token)):
+        """
+        Envía email de verificación para registro - NO requiere token
+        """
+        try:
+            email = registro_data.email
+            
+            # Verificar que el email no exista ya
+            connection = get_db_connection()
+            cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+            
+            cursor.execute("SELECT id FROM usuarios WHERE email = %s", (email,))
+            if cursor.fetchone():
+                cursor.close()
+                connection.close()
+                raise HTTPException(status_code=400, detail="El email ya está registrado")
+            
+            cursor.close()
+            connection.close()
+            
+            # Datos temporales del usuario (puedes agregar más campos aquí)
+            user_data = {
+                'email': email,
+                'nombre': None,  # Se puede agregar en el frontend después
+                'tipo': 'USUARIO',
+                'tema': 'DEFAULT',
+                'idioma': 'ES',
+                'mejorar_agente': False,
+                'memoria': False
+            }
+            
+            # Enviar email de verificación
+            token = EmailService.send_verification_email(email, user_data)
+            
+            return {
+                "message": "Email de verificación enviado",
+                "email": email,
+                "status": 200
+            }
+            
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error en registro: {str(e)}")
+    
+    @staticmethod
+    def verificar_email(token: str):
+        """
+        Verifica el email y crea el usuario - Súper simple
+        """
+        try:
+            # Verificar y consumir token
+            token_data = EmailService.consume_token(token)
+            
+            if not token_data:
+                return HTMLResponse(content="<h1>❌ Token inválido o expirado</h1>", status_code=400)
+            
+            # Crear usuario en la base de datos
+            connection = get_db_connection()
+            cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+            
+            # Preparar datos del usuario
+            user_data = token_data['user_data']
+            user_data['uuid'] = uuid.uuid4()
+            user_data['created_at'] = datetime.now()
+            user_data['updated_at'] = datetime.now()
+            user_data['cualidades'] = json.dumps([])
+            user_data['funciones'] = json.dumps([])
+            
+            # Verificar que el email no exista
+            cursor.execute("SELECT id FROM usuarios WHERE email = %s", (user_data['email'],))
+            if cursor.fetchone():
+                cursor.close()
+                connection.close()
+                return HTMLResponse(content="<h1>❌ Email ya registrado</h1>", status_code=400)
+            
+            # Insertar usuario
+            columns = list(user_data.keys())
+            values = list(user_data.values())
+            placeholders = ['%s'] * len(values)
+            
+            query = f"""
+                INSERT INTO usuarios ({', '.join(columns)})
+                VALUES ({', '.join(placeholders)})
+                RETURNING *
+            """
+            
+            cursor.execute(query, values)
+            row = cursor.fetchone()
+            connection.commit()
+            cursor.close()
+            connection.close()
+            
+            if not row:
+                return HTMLResponse(content="<h1>❌ Error al crear usuario</h1>", status_code=500)
+            
+            # ¡Usuario creado!
+            return HTMLResponse(content=f"<h1>✅ Usuario creado: {row['email']}</h1>", status_code=200)
+            
+        except Exception as e:
+            return HTMLResponse(content=f"<h1>❌ Error: {str(e)}</h1>", status_code=500)
+
+    # ===== MÉTODOS EXISTENTES (sin cambios) =====
+
+
     @staticmethod
     def index(token: str = Depends(verify_token)):
         """Obtiene todos los usuarios - Estilo Laravel"""
