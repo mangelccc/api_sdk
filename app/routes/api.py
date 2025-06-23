@@ -13,6 +13,8 @@ router.get("/agent-info", tags=["chat"])(ChatController.agent_info)
 router.post("/usuarios/registro", tags=["registro"])(UsuarioController.registro)
 router.get("/usuarios/verificar-email/{token}", tags=["registro"])(UsuarioController.verificar_email)
 
+router.post("/usuarios/login", tags=["auth"])(UsuarioController.login)
+
 # ========== RUTAS DE USUARIOS - POR ID (ESTILO LARAVEL) ==========
 router.get("/usuarios", tags=["usuarios"])(UsuarioController.index)
 router.get("/usuarios/{usuario_id}", tags=["usuarios"])(UsuarioController.show)
