@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Depends
-from app.api.models.Usuario import Usuario, CreateUsuario, UpdateUsuario
+from app.api.models.Usuario import Usuario, CreateUsuario, UpdateUsuario, RegistroRequest, LoginRequest
 from app.security import verify_token
 from app.bd.conexion_bd_agents import get_db_connection
 from app.services.EmailService import EmailService
@@ -10,11 +10,27 @@ import json
 import uuid
 from datetime import datetime
 
-# Modelo simple para el registro
-class RegistroRequest(BaseModel):
-    email: EmailStr
-
 class UsuarioController:
+
+    @staticmethod
+    def login(login_data: LoginRequest, token: str = Depends(verify_token)):
+        try:
+            email = login_data.email
+            
+            connection = get_db_connection()
+            cursor = connection.cursor()
+            
+            # Consulta simple
+            cursor.execute("SELECT 1 FROM usuarios WHERE email = %s LIMIT 1", (email,))
+            exists = cursor.fetchone() is not None
+            
+            cursor.close()
+            connection.close()
+            
+            return exists  # True o False
+        
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error en login: {str(e)}")
     
     @staticmethod
     def registro(registro_data: RegistroRequest, token: str = Depends(verify_token)):

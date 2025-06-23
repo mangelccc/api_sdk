@@ -97,3 +97,10 @@ class DeleteUsuarioResponse(BaseModel):
     deleted_user_id: int
     deleted_user_email: Optional[str] = None
     deleted_user_name: Optional[str] = None
+
+# Modelo simple para el registro
+class RegistroRequest(BaseModel):
+    email: EmailStr
+    
+class LoginRequest(BaseModel):
+    email: EmailStr
