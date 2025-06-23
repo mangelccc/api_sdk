@@ -1,4 +1,3 @@
-
 from fastapi import HTTPException, Depends
 from app.api.models.Usuario import Usuario, CreateUsuario, UpdateUsuario
 from app.security import verify_token
@@ -16,10 +15,12 @@ class RegistroRequest(BaseModel):
     email: EmailStr
 
 class UsuarioController:
-
+    
     @staticmethod
     def registro(registro_data: RegistroRequest, token: str = Depends(verify_token)):
- 
+        """
+        Envía email de verificación para registro - REQUIERE token
+        """
         try:
             email = registro_data.email
             
@@ -63,7 +64,9 @@ class UsuarioController:
     
     @staticmethod
     def verificar_email(token: str):
-
+        """
+        Verifica el email y crea el usuario - Súper simple
+        """
         try:
             # Verificar y consumir token
             token_data = EmailService.consume_token(token)
@@ -77,7 +80,7 @@ class UsuarioController:
             
             # Preparar datos del usuario
             user_data = token_data['user_data']
-            user_data['uuid'] = uuid.uuid4()
+            user_data['uuid'] = str(uuid.uuid4())  # ← CONVERTIR A STRING
             user_data['created_at'] = datetime.now()
             user_data['updated_at'] = datetime.now()
             user_data['cualidades'] = json.dumps([])
@@ -117,11 +120,10 @@ class UsuarioController:
             return HTMLResponse(content=f"<h1>❌ Error: {str(e)}</h1>", status_code=500)
 
     # ===== MÉTODOS EXISTENTES (sin cambios) =====
-
-
+    
     @staticmethod
     def index(token: str = Depends(verify_token)):
-
+        """Obtiene todos los usuarios - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -181,7 +183,7 @@ class UsuarioController:
 
     @staticmethod
     def store(usuario_data: CreateUsuario, token: str = Depends(verify_token)):
-
+        """Crea un nuevo usuario - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -191,7 +193,7 @@ class UsuarioController:
             
             # Generar UUID si no existe
             if 'uuid' not in data or not data['uuid']:
-                data['uuid'] = uuid.uuid4()
+                data['uuid'] = str(uuid.uuid4())  # ← CONVERTIR A STRING
             
             # Convertir listas a JSON
             if 'cualidades' in data:
@@ -270,7 +272,7 @@ class UsuarioController:
 
     @staticmethod
     def show(usuario_id: int, token: str = Depends(verify_token)):
-
+        """Obtiene un usuario específico por ID - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -327,7 +329,7 @@ class UsuarioController:
 
     @staticmethod
     def show_by_uuid(usuario_uuid: str, token: str = Depends(verify_token)):
-
+        """Obtiene un usuario específico por UUID - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -384,7 +386,7 @@ class UsuarioController:
 
     @staticmethod
     def update(usuario_id: int, usuario_data: UpdateUsuario, token: str = Depends(verify_token)):
-
+        """Actualiza un usuario completo por ID - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -474,7 +476,7 @@ class UsuarioController:
 
     @staticmethod
     def update_by_uuid(usuario_uuid: str, usuario_data: UpdateUsuario, token: str = Depends(verify_token)):
-
+        """Actualiza un usuario completo por UUID - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -564,7 +566,7 @@ class UsuarioController:
 
     @staticmethod
     def destroy(usuario_id: int, token: str = Depends(verify_token)):
-
+        """Elimina un usuario por ID - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -595,7 +597,7 @@ class UsuarioController:
 
     @staticmethod
     def destroy_by_uuid(usuario_uuid: str, token: str = Depends(verify_token)):
-
+        """Elimina un usuario por UUID - Estilo Laravel"""
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
