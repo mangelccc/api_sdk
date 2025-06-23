@@ -45,7 +45,8 @@ class UsuarioController:
                 'tema': 'DEFAULT',
                 'idioma': 'ES',
                 'mejorar_agente': False,
-                'memoria': False
+                'memoria': False,
+                'avatar': 'https://img.freepik.com/vector-gratis/circulo-azul-usuario-blanco_78370-4707.jpg?semt=ais_hybrid&w=740'
             }
             
             # Enviar email de verificación
