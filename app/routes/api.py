@@ -9,6 +9,10 @@ router = APIRouter(prefix="/api", tags=["api"])
 router.post("/chat", tags=["chat"])(ChatController.chat)
 router.get("/agent-info", tags=["chat"])(ChatController.agent_info)
 
+# ========== RUTAS DE REGISTRO (SIN TOKEN) ==========
+router.post("/usuarios/registro", tags=["registro"])(UsuarioController.registro)
+router.get("/usuarios/verificar-email/{token}", tags=["registro"])(UsuarioController.verificar_email)
+
 # ========== RUTAS DE USUARIOS - POR ID (ESTILO LARAVEL) ==========
 router.get("/usuarios", tags=["usuarios"])(UsuarioController.index)
 router.get("/usuarios/{usuario_id}", tags=["usuarios"])(UsuarioController.show)

@@ -43,8 +43,9 @@ class EmailService:
             msg['To'] = email
             msg['Subject'] = "Verifica tu cuenta"
             
-            # Cuerpo del email - Link directo a tu API
-            verification_url = f"http://15.188.239.93/api/usuarios/verificar-email/{token}"
+            # Cuerpo del email - Link dinámico
+            base_url = os.getenv('API_BASE_URL', 'http://localhost:8000')
+            verification_url = f"{base_url}/api/usuarios/verificar-email/{token}"
             
             body = f"""
             ¡Hola!
