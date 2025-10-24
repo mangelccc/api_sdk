@@ -1,6 +1,8 @@
 from fastapi import APIRouter
 from app.api.controllers.ControllerChat import ChatController
 from app.api.controllers.ControllerUsuario import UsuarioController
+from app.api.controllers.ControllerContacto import ContactoController
+
 
 # Crear router para rutas de API
 router = APIRouter(prefix="/api", tags=["api"])
@@ -26,3 +28,9 @@ router.delete("/usuarios/{usuario_id}", tags=["usuarios"])(UsuarioController.des
 router.get("/usuarios/uuid/{usuario_uuid}", tags=["usuarios-uuid"])(UsuarioController.show_by_uuid)
 router.put("/usuarios/uuid/{usuario_uuid}", tags=["usuarios-uuid"])(UsuarioController.update_by_uuid)
 router.delete("/usuarios/uuid/{usuario_uuid}", tags=["usuarios-uuid"])(UsuarioController.destroy_by_uuid)
+
+# ========== RUTAS DE CONTACTO (ADMIN - CON TOKEN) ==========
+router.get("/contactos", tags=["contacto-admin"])(ContactoController.index)
+router.get("/contactos/{contacto_id}", tags=["contacto-admin"])(ContactoController.show)
+router.put("/contactos/{contacto_id}", tags=["contacto-admin"])(ContactoController.update)
+router.delete("/contactos/{contacto_id}", tags=["contacto-admin"])(ContactoController.destroy)
