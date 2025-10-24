@@ -29,8 +29,9 @@ router.get("/usuarios/uuid/{usuario_uuid}", tags=["usuarios-uuid"])(UsuarioContr
 router.put("/usuarios/uuid/{usuario_uuid}", tags=["usuarios-uuid"])(UsuarioController.update_by_uuid)
 router.delete("/usuarios/uuid/{usuario_uuid}", tags=["usuarios-uuid"])(UsuarioController.destroy_by_uuid)
 
-# ========== RUTAS DE CONTACTO (ADMIN - CON TOKEN) ==========
-router.get("/contactos", tags=["contacto-admin"])(ContactoController.index)
-router.get("/contactos/{contacto_id}", tags=["contacto-admin"])(ContactoController.show)
-router.put("/contactos/{contacto_id}", tags=["contacto-admin"])(ContactoController.update)
-router.delete("/contactos/{contacto_id}", tags=["contacto-admin"])(ContactoController.destroy)
+# ========== RUTAS DE CONTACTO ✅ TODAS CON TOKEN ==========
+router.post("/contactos", tags=["contacto"])(ContactoController.create)          # ✅ Crear contacto (CON TOKEN)
+router.get("/contactos", tags=["contacto"])(ContactoController.index)            # ✅ Listar contactos (CON TOKEN)
+router.get("/contactos/{contacto_id}", tags=["contacto"])(ContactoController.show)
+router.put("/contactos/{contacto_id}", tags=["contacto"])(ContactoController.update)
+router.delete("/contactos/{contacto_id}", tags=["contacto"])(ContactoController.destroy)

@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Depends
-from app.api.models.Contacto import Contacto, CreateContacto, UpdateContacto, ContactoResponse
+from app.api.models.Contacto import Contacto, CreateContacto, UpdateContacto
 from app.security import verify_token
 from app.bd.conexion_bd_agents import get_db_connection
 from app.services.ContactoEmailService import ContactoEmailService
@@ -9,16 +9,17 @@ from datetime import datetime
 class ContactoController:
     
     @staticmethod
-    def create(contacto_data: CreateContacto):
+    def create(contacto_data: CreateContacto, token: str = Depends(verify_token)):
         """
         Crea un nuevo contacto y envía email de notificación
-        NO REQUIERE TOKEN - Es público para el formulario de contacto
+        ✅ AHORA SÍ REQUIERE TOKEN (protección anti-spam)
+        ✅ Solo recibe nombre, email, telefono, mensaje (sin ID)
         """
         try:
             connection = get_db_connection()
             cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
-            # Preparar datos
+            # Preparar datos (sin ID, se auto-genera)
             data = {
                 'nombre': contacto_data.nombre,
                 'email': contacto_data.email,
@@ -29,7 +30,7 @@ class ContactoController:
                 'updated_at': datetime.now()
             }
             
-            # Insertar en base de datos
+            # Insertar en base de datos (uuid e id se generan automáticamente)
             query = """
                 INSERT INTO contactos (nombre, email, telefono, mensaje, estado, created_at, updated_at)
                 VALUES (%(nombre)s, %(email)s, %(telefono)s, %(mensaje)s, %(estado)s, %(created_at)s, %(updated_at)s)
