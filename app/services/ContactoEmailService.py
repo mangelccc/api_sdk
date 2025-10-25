@@ -202,273 +202,287 @@ class ContactoEmailService:
         """
     
     @staticmethod
-    def get_user_confirmation_template(nombre: str) -> str:
-        """
-        Template HTML para confirmación al USUARIO
-        """
-        fecha_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
-        
-        return f"""
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Mensaje Recibido</title>
-            <style>
-                * {{
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                }}
-                
-                body {{
-                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    line-height: 1.6;
-                    color: #333;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    padding: 20px;
-                }}
-                
+    @staticmethod
+def get_user_confirmation_template(nombre: str) -> str:
+    """
+    Template HTML para confirmación al USUARIO - Versión Oscura
+    """
+    fecha_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
+    
+    return f"""
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mensaje Recibido</title>
+        <style>
+            * {{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }}
+            
+            body {{
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.6;
+                color: #f3f4f6;
+                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+                padding: 20px;
+            }}
+            
+            .email-container {{
+                max-width: 600px;
+                margin: 0 auto;
+                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+                border-radius: 16px;
+                overflow: hidden;
+                border: 1px solid rgba(168, 85, 247, 0.3);
+                box-shadow: 0 20px 50px rgba(88, 28, 135, 0.4);
+            }}
+            
+            .header {{
+                background: linear-gradient(90deg, #fbbf24, #f472b6, #a855f7);
+                padding: 40px 20px;
+                text-align: center;
+            }}
+            
+            .emoji {{
+                font-size: 64px;
+                margin-bottom: 15px;
+                animation: bounce 2s infinite;
+            }}
+            
+            @keyframes bounce {{
+                0%, 100% {{ transform: translateY(0); }}
+                50% {{ transform: translateY(-10px); }}
+            }}
+            
+            .header h1 {{
+                color: white;
+                font-size: 32px;
+                font-weight: 700;
+                margin: 0 0 10px 0;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            }}
+            
+            .header p {{
+                color: rgba(255, 255, 255, 0.95);
+                font-size: 16px;
+            }}
+            
+            .content {{
+                padding: 40px 30px;
+                background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+            }}
+            
+            .greeting {{
+                font-size: 22px;
+                color: #fbbf24;
+                margin-bottom: 20px;
+                font-weight: 600;
+            }}
+            
+            .message {{
+                font-size: 16px;
+                color: #d1d5db;
+                line-height: 1.8;
+                margin-bottom: 25px;
+            }}
+            
+            .info-box {{
+                background: rgba(30, 27, 75, 0.6);
+                border: 1px solid rgba(168, 85, 247, 0.3);
+                border-left: 4px solid #a855f7;
+                border-radius: 12px;
+                padding: 20px;
+                margin: 25px 0;
+                backdrop-filter: blur(10px);
+            }}
+            
+            .info-box h3 {{
+                color: #f472b6;
+                font-size: 18px;
+                margin-bottom: 12px;
+            }}
+            
+            .info-box ul {{
+                list-style: none;
+                padding-left: 0;
+            }}
+            
+            .info-box li {{
+                color: #d1d5db;
+                font-size: 15px;
+                margin-bottom: 8px;
+                padding-left: 25px;
+                position: relative;
+            }}
+            
+            .info-box li:before {{
+                content: "✓";
+                position: absolute;
+                left: 0;
+                color: #fbbf24;
+                font-weight: bold;
+                font-size: 18px;
+            }}
+            
+            .cta-section {{
+                text-align: center;
+                margin: 30px 0;
+                padding: 25px;
+                background: rgba(30, 27, 75, 0.4);
+                border-radius: 12px;
+                border: 1px solid rgba(168, 85, 247, 0.2);
+            }}
+            
+            .cta-section p {{
+                color: #f3f4f6;
+                font-size: 15px;
+                margin-bottom: 15px;
+            }}
+            
+            .social-links {{
+                display: flex;
+                justify-content: center;
+                gap: 15px;
+                margin-top: 15px;
+                flex-wrap: wrap;
+            }}
+            
+            .social-link {{
+                display: inline-block;
+                padding: 10px 20px;
+                background: linear-gradient(90deg, #fbbf24, #f472b6, #a855f7);
+                background-size: 200% 100%;
+                color: white;
+                text-decoration: none;
+                border-radius: 25px;
+                font-size: 14px;
+                font-weight: 600;
+                transition: all 0.4s ease;
+            }}
+            
+            .social-link:hover {{
+                background-position: 100% 0;
+                transform: translateY(-2px);
+            }}
+            
+            .footer {{
+                background: rgba(15, 23, 42, 0.8);
+                padding: 25px;
+                text-align: center;
+                border-top: 1px solid rgba(168, 85, 247, 0.3);
+            }}
+            
+            .footer p {{
+                color: #9ca3af;
+                font-size: 13px;
+                margin: 5px 0;
+            }}
+            
+            .footer p strong {{
+                color: #fbbf24;
+            }}
+            
+            .timestamp {{
+                background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), rgba(244, 114, 182, 0.1), rgba(168, 85, 247, 0.1));
+                border: 1px solid rgba(168, 85, 247, 0.2);
+                border-radius: 8px;
+                padding: 12px;
+                text-align: center;
+                margin-bottom: 25px;
+                font-size: 13px;
+                color: #fbbf24;
+                font-weight: 500;
+            }}
+            
+            @media only screen and (max-width: 600px) {{
                 .email-container {{
-                    max-width: 600px;
-                    margin: 0 auto;
-                    background: white;
-                    border-radius: 16px;
-                    overflow: hidden;
-                    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+                    margin: 0;
+                    border-radius: 0;
                 }}
                 
                 .header {{
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    padding: 40px 20px;
-                    text-align: center;
-                }}
-                
-                .emoji {{
-                    font-size: 64px;
-                    margin-bottom: 15px;
-                    animation: bounce 2s infinite;
-                }}
-                
-                @keyframes bounce {{
-                    0%, 100% {{ transform: translateY(0); }}
-                    50% {{ transform: translateY(-10px); }}
-                }}
-                
-                .header h1 {{
-                    color: white;
-                    font-size: 32px;
-                    font-weight: 700;
-                    margin: 0 0 10px 0;
-                    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-                }}
-                
-                .header p {{
-                    color: rgba(255, 255, 255, 0.9);
-                    font-size: 16px;
+                    padding: 30px 15px;
                 }}
                 
                 .content {{
-                    padding: 40px 30px;
+                    padding: 30px 20px;
+                }}
+                
+                .header h1 {{
+                    font-size: 26px;
                 }}
                 
                 .greeting {{
-                    font-size: 22px;
-                    color: #333;
-                    margin-bottom: 20px;
-                    font-weight: 600;
-                }}
-                
-                .message {{
-                    font-size: 16px;
-                    color: #555;
-                    line-height: 1.8;
-                    margin-bottom: 25px;
-                }}
-                
-                .info-box {{
-                    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-                    border-left: 4px solid #667eea;
-                    border-radius: 8px;
-                    padding: 20px;
-                    margin: 25px 0;
-                }}
-                
-                .info-box h3 {{
-                    color: #667eea;
-                    font-size: 18px;
-                    margin-bottom: 12px;
-                }}
-                
-                .info-box ul {{
-                    list-style: none;
-                    padding-left: 0;
-                }}
-                
-                .info-box li {{
-                    color: #555;
-                    font-size: 15px;
-                    margin-bottom: 8px;
-                    padding-left: 25px;
-                    position: relative;
-                }}
-                
-                .info-box li:before {{
-                    content: "✓";
-                    position: absolute;
-                    left: 0;
-                    color: #667eea;
-                    font-weight: bold;
-                    font-size: 18px;
-                }}
-                
-                .cta-section {{
-                    text-align: center;
-                    margin: 30px 0;
-                    padding: 25px;
-                    background: #f8f9fa;
-                    border-radius: 12px;
-                }}
-                
-                .cta-section p {{
-                    color: #666;
-                    font-size: 15px;
-                    margin-bottom: 15px;
+                    font-size: 20px;
                 }}
                 
                 .social-links {{
-                    display: flex;
-                    justify-content: center;
-                    gap: 15px;
-                    margin-top: 15px;
+                    flex-direction: column;
+                    gap: 10px;
                 }}
-                
-                .social-link {{
-                    display: inline-block;
-                    padding: 10px 20px;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
-                    text-decoration: none;
-                    border-radius: 25px;
-                    font-size: 14px;
-                    font-weight: 600;
-                    transition: transform 0.3s ease;
-                }}
-                
-                .social-link:hover {{
-                    transform: translateY(-2px);
-                }}
-                
-                .footer {{
-                    background: #f8f9fa;
-                    padding: 25px;
-                    text-align: center;
-                    border-top: 1px solid #e9ecef;
-                }}
-                
-                .footer p {{
-                    color: #999;
-                    font-size: 13px;
-                    margin: 5px 0;
-                }}
-                
-                .timestamp {{
-                    background: white;
-                    border: 1px solid #e9ecef;
-                    border-radius: 8px;
-                    padding: 12px;
-                    text-align: center;
-                    margin-bottom: 25px;
-                    font-size: 13px;
-                    color: #666;
-                }}
-                
-                @media only screen and (max-width: 600px) {{
-                    .email-container {{
-                        margin: 0;
-                        border-radius: 0;
-                    }}
-                    
-                    .header {{
-                        padding: 30px 15px;
-                    }}
-                    
-                    .content {{
-                        padding: 30px 20px;
-                    }}
-                    
-                    .header h1 {{
-                        font-size: 26px;
-                    }}
-                    
-                    .greeting {{
-                        font-size: 20px;
-                    }}
-                    
-                    .social-links {{
-                        flex-direction: column;
-                        gap: 10px;
-                    }}
-                }}
-            </style>
-        </head>
-        <body>
-            <div class="email-container">
-                <div class="header">
-                    <div class="emoji">✅</div>
-                    <h1>¡Mensaje Recibido!</h1>
-                    <p>Gracias por contactarnos</p>
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="email-container">
+            <div class="header">
+                <div class="emoji">✅</div>
+                <h1>¡Mensaje Recibido!</h1>
+                <p>Gracias por contactarnos</p>
+            </div>
+            
+            <div class="content">
+                <div class="timestamp">
+                    📅 {fecha_hora}
                 </div>
                 
-                <div class="content">
-                    <div class="timestamp">
-                        📅 {fecha_hora}
-                    </div>
-                    
-                    <div class="greeting">
-                        ¡Hola {nombre}! 👋
-                    </div>
-                    
-                    <div class="message">
-                        Hemos recibido tu mensaje correctamente. Nuestro equipo lo revisará y 
-                        te responderemos lo antes posible.
-                    </div>
-                    
-                    <div class="info-box">
-                        <h3>📋 ¿Qué sigue ahora?</h3>
-                        <ul>
-                            <li>Revisaremos tu consulta en detalle</li>
-                            <li>Te responderemos en un plazo de 24-48 horas</li>
-                            <li>Recibirás nuestra respuesta en este mismo email</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="cta-section">
-                        <p><strong>Mientras tanto, síguenos en nuestras redes:</strong></p>
-                        <div class="social-links">
-                            <a href="#" class="social-link">🌐 Web</a>
-                            <a href="#" class="social-link">💼 LinkedIn</a>
-                            <a href="#" class="social-link">📱 Twitter</a>
-                        </div>
-                    </div>
-                    
-                    <div class="message" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef;">
-                        Si tienes alguna pregunta urgente, no dudes en responder directamente a este correo.
+                <div class="greeting">
+                    ¡Hola {nombre}! 👋
+                </div>
+                
+                <div class="message">
+                    Hemos recibido tu mensaje correctamente. Nuestro equipo lo revisará y 
+                    te responderemos lo antes posible.
+                </div>
+                
+                <div class="info-box">
+                    <h3>📋 ¿Qué sigue ahora?</h3>
+                    <ul>
+                        <li>Revisaremos tu consulta en detalle</li>
+                        <li>Te responderemos en un plazo de 24-48 horas</li>
+                        <li>Recibirás nuestra respuesta en este mismo email</li>
+                    </ul>
+                </div>
+                
+                <div class="cta-section">
+                    <p><strong>Mientras tanto, síguenos en nuestras redes:</strong></p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">🌐 Web</a>
+                        <a href="#" class="social-link">💼 LinkedIn</a>
+                        <a href="#" class="social-link">📱 Twitter</a>
                     </div>
                 </div>
                 
-                <div class="footer">
-                    <p><strong>Gracias por tu confianza</strong></p>
-                    <p>Este es un correo automático, pero puedes responderlo directamente</p>
-                    <p style="margin-top: 15px;">
-                        © 2025 Tu Empresa • Todos los derechos reservados
-                    </p>
+                <div class="message" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(168, 85, 247, 0.3);">
+                    Si tienes alguna pregunta urgente, no dudes en responder directamente a este correo.
                 </div>
             </div>
-        </body>
-        </html>
-        """
+            
+            <div class="footer">
+                <p><strong>Gracias por tu confianza</strong></p>
+                <p>Este es un correo automático, pero puedes responderlo directamente</p>
+                <p style="margin-top: 15px;">
+                    © 2025 Tu Empresa • Todos los derechos reservados
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
     
     @staticmethod
     def send_contacto_notification(nombre: str, email: str, telefono: str, mensaje: str):
