@@ -202,6 +202,7 @@ class ContactoEmailService:
         """
     
     @staticmethod
+    @staticmethod
 def get_user_confirmation_template(nombre: str) -> str:
     """
     Template HTML para confirmación al USUARIO - Versión Oscura
