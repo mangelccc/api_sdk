@@ -447,9 +447,8 @@ class ContactoEmailService:
                     <div class="cta-section">
                         <p><strong>Mientras tanto, síguenos en nuestras redes:</strong></p>
                         <div class="social-links">
-                            <a href="#" class="social-link">🌐 Web</a>
-                            <a href="#" class="social-link">💼 LinkedIn</a>
-                            <a href="#" class="social-link">📱 Twitter</a>
+                            <a href="https://www.zerowork.es" class="social-link">🌐 Web</a>
+                            <a href="https://www.linkedin.com/in/grimalmiguel" class="social-link">💼 LinkedIn</a>
                         </div>
                     </div>
                     
