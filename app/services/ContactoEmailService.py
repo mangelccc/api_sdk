@@ -245,10 +245,11 @@ class ContactoEmailService:
                     text-align: center;
                 }}
                 
-                .emoji {{
-                    font-size: 64px;
-                    margin-bottom: 15px;
-                    animation: bounce 2s infinite;
+                .logo {{
+                    width: 64px;
+                    height: 64px;
+                    margin: 0 auto 15px auto;
+                    display: block;
                 }}
                 
                 @keyframes bounce {{
@@ -427,7 +428,7 @@ class ContactoEmailService:
         <body>
             <div class="email-container">
                 <div class="header">
-                    <div class="emoji">✅</div>
+                    <img src="https://i.ibb.co/qYz0VnYk/Gemini-Generated-Image-uk4eqeuk4eqeuk4e-Photoroom.png" alt="ZeroWork Logo" class="logo">
                     <h1>¡Mensaje Recibido!</h1>
                     <p>Gracias por contactarnos</p>
                 </div>
@@ -517,7 +518,7 @@ class ContactoEmailService:
             msg_admin = MIMEMultipart('alternative')
             msg_admin['From'] = f"Sistema de Contacto <{smtp_user}>"
             msg_admin['To'] = destino_admin
-            msg_admin['Subject'] = f"🚀 Nuevo contacto de {nombre}"
+            msg_admin['Subject'] = f"Nuevo contacto de {nombre}"
             msg_admin['Reply-To'] = email
             
             html_admin = ContactoEmailService.get_admin_email_template(
@@ -585,12 +586,12 @@ ZeroWork
             # Enviar al admin
             print(f"\n📤 Enviando a ADMIN: {destino_admin}")
             server.sendmail(smtp_user, destino_admin, msg_admin.as_string())
-            print(f"✅ Email al admin enviado correctamente")
+            print(f"Email al admin enviado correctamente")
             
             # Enviar al usuario
             print(f"\n📤 Enviando confirmación a USUARIO: {email}")
             server.sendmail(smtp_user, email, msg_user.as_string())
-            print(f"✅ Email de confirmación enviado correctamente")
+            print(f"Email de confirmación enviado correctamente")
             
             server.quit()
             print(f"\n🎉 ¡Ambos emails enviados exitosamente!")
