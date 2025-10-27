@@ -246,8 +246,8 @@ class ContactoEmailService:
                 }}
                 
                 .logo {{
-                    width: 64px;
-                    height: 64px;
+                    width: 500px;
+                    height: 500px;
                     margin: 0 auto 15px auto;
                     display: block;
                 }}
