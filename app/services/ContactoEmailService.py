@@ -248,7 +248,7 @@ class ContactoEmailService:
                 .logo {{
                     width: 250px;
                     height: 250px;
-                    margin: 0 auto 15px auto;
+                    margin: 0 auto 5px auto;
                     display: block;
                 }}
                 
@@ -428,7 +428,7 @@ class ContactoEmailService:
         <body>
             <div class="email-container">
                 <div class="header">
-                    <img src="https://i.ibb.co/qYz0VnYk/Gemini-Generated-Image-uk4eqeuk4eqeuk4e-Photoroom.png" alt="ZeroWork Logo" class="logo">
+                    <img src="https://i.ibb.co/1JdcGM0G/zerowork-png.png" alt="ZeroWork Logo" class="logo">
                     <h1>¡Mensaje Recibido!</h1>
                     <p>Gracias por contactarnos</p>
                 </div>
