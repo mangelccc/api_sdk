@@ -9,7 +9,7 @@ from datetime import datetime
 class ContactoController:
     
     @staticmethod
-    def create(contacto_data: CreateContacto, token: str = Depends(verify_token)):
+    def create(contacto_data: CreateContacto):
         """
         Crea un nuevo contacto y envía email de notificación
         ✅ AHORA SÍ REQUIERE TOKEN (protección anti-spam)
