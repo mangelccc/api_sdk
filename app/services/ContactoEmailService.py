@@ -428,7 +428,7 @@ class ContactoEmailService:
         <body>
             <div class="email-container">
                 <div class="header">
-                    <img src="https://i.ibb.co/1JdcGM0G/zerowork-png.png" alt="ZeroWork Logo" class="logo">
+                    <img src="../images/zerowork-logo.png" alt="ZeroWork Logo" class="logo">
                     <h1>¡Mensaje Recibido!</h1>
                     <p>Gracias por contactarnos</p>
                 </div>
