@@ -4,24 +4,11 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 import os
 from dotenv import load_dotenv
-import base64
 
 load_dotenv()
 
 class ContactoEmailService:
-
-    @staticmethod
-def get_logo_base64():
-    """Convierte el logo a base64"""
-    try:
-        with open("images/zerowork-logo.png", "rb") as image_file:
-            encoded = base64.b64encode(image_file.read()).decode('utf-8')
-            return f"data:image/png;base64,{encoded}"
-    except Exception as e:
-        # Si falla, usa un emoji o imagen por defecto
-        return ""
-    logo_src = EmailService.get_logo_base64() or "https://via.placeholder.com/150"
-
+    
     @staticmethod
     def get_admin_email_template(nombre: str, email: str, telefono: str, mensaje: str) -> str:
         """
@@ -441,7 +428,7 @@ def get_logo_base64():
         <body>
             <div class="email-container">
                 <div class="header">
-                    <img src="{logo_src}" alt="ZeroWork Logo" class="logo">
+                    <img src="../images/zerowork-logo.png" alt="ZeroWork Logo" class="logo">
                     <h1>¡Mensaje Recibido!</h1>
                     <p>Gracias por contactarnos</p>
                 </div>
